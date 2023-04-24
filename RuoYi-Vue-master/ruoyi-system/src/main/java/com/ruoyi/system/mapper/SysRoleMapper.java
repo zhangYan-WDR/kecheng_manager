@@ -2,12 +2,14 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.common.core.domain.entity.SysRole;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 角色表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysRoleMapper
 {
     /**
@@ -48,6 +50,15 @@ public interface SysRoleMapper
      * @return 角色对象信息
      */
     public SysRole selectRoleById(Long roleId);
+
+
+    /**
+     * 通过角色名称查询角色
+     *
+     * @param roleName 角色名称
+     * @return 角色对象信息
+     */
+    public SysRole selectRoleByName(String roleName);
 
     /**
      * 根据用户ID查询角色

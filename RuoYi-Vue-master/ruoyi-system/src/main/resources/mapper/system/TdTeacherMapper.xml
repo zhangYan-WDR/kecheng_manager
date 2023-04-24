@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TdTeacherMapper">
+    
+    <resultMap type="TdTeacher" id="TdTeacherResult">
+        <result property="id"    column="id"    />
+        <result property="teacherNo"    column="teacher_no"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherPhone"    column="teacher_phone"    />
+        <result property="teacherEmail"    column="teacher_email"    />
+        <result property="teacherSex"    column="teacher_sex"    />
+        <result property="teacherPassword"    column="teacher_password"    />
+    </resultMap>
+
+    <sql id="selectTdTeacherVo">
+        select id, teacher_no, teacher_name, teacher_phone, teacher_email, teacher_sex, teacher_password from td_teacher
+    </sql>
+
+    <select id="selectTdTeacherList" parameterType="TdTeacher" resultMap="TdTeacherResult">
+        <include refid="selectTdTeacherVo"/>
+        <where>  
+            <if test="teacherNo != null  and teacherNo != ''"> and teacher_no like concat('%', #{teacherNo}, '%')</if>
+            <if test="teacherName != null  and teacherName != ''"> and teacher_name like concat('%', #{teacherName}, '%')</if>
+            <if test="teacherPhone != null  and teacherPhone != ''"> and teacher_phone like concat('%', #{teacherPhone}, '%')</if>
+            <if test="teacherEmail != null  and teacherEmail != ''"> and teacher_email like concat('%', #{teacherEmail}, '%')</if>
+            <if test="teacherSex != null  and teacherSex != ''"> and teacher_sex = #{teacherSex}</if>
+        </where>
+    </select>
+    
+    <select id="selectTdTeacherById" parameterType="Long" resultMap="TdTeacherResult">
+        <include refid="selectTdTeacherVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTdTeacher" parameterType="TdTeacher" useGeneratedKeys="true" keyProperty="id">
+        insert into td_teacher
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherNo != null">teacher_no,</if>
+            <if test="teacherName != null">teacher_name,</if>
+            <if test="teacherPhone != null">teacher_phone,</if>
+            <if test="teacherEmail != null">teacher_email,</if>
+            <if test="teacherSex != null">teacher_sex,</if>
+            <if test="teacherPassword != null">teacher_password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherNo != null">#{teacherNo},</if>
+            <if test="teacherName != null">#{teacherName},</if>
+            <if test="teacherPhone != null">#{teacherPhone},</if>
+            <if test="teacherEmail != null">#{teacherEmail},</if>
+            <if test="teacherSex != null">#{teacherSex},</if>
+            <if test="teacherPassword != null">#{teacherPassword},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTdTeacher" parameterType="TdTeacher">
+        update td_teacher
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teacherNo != null">teacher_no = #{teacherNo},</if>
+            <if test="teacherName != null">teacher_name = #{teacherName},</if>
+            <if test="teacherPhone != null">teacher_phone = #{teacherPhone},</if>
+            <if test="teacherEmail != null">teacher_email = #{teacherEmail},</if>
+            <if test="teacherSex != null">teacher_sex = #{teacherSex},</if>
+            <if test="teacherPassword != null">teacher_password = #{teacherPassword},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTdTeacherById" parameterType="Long">
+        delete from td_teacher where id = #{id}
+    </delete>
+
+    <delete id="deleteTdTeacherByIds" parameterType="String">
+        delete from td_teacher where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

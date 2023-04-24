@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TdStudentMapper">
+    
+    <resultMap type="TdStudent" id="TdStudentResult">
+        <result property="id"    column="id"    />
+        <result property="studentNo"    column="student_no"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="studentPhone"    column="student_phone"    />
+        <result property="studentEmail"    column="student_email"    />
+        <result property="studentGrade"    column="student_grade"    />
+        <result property="studentPassword"    column="student_password"    />
+    </resultMap>
+
+    <sql id="selectTdStudentVo">
+        select id, student_no, student_name, student_phone, student_email, student_grade, student_password from td_student
+    </sql>
+
+    <select id="selectTdStudentList" parameterType="TdStudent" resultMap="TdStudentResult">
+        <include refid="selectTdStudentVo"/>
+        <where>  
+            <if test="studentNo != null  and studentNo != ''"> and student_no = #{studentNo}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="studentPhone != null  and studentPhone != ''"> and student_phone = #{studentPhone}</if>
+            <if test="studentEmail != null  and studentEmail != ''"> and student_email = #{studentEmail}</if>
+        </where>
+    </select>
+    
+    <select id="selectTdStudentById" parameterType="Long" resultMap="TdStudentResult">
+        <include refid="selectTdStudentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTdStudent" parameterType="TdStudent" useGeneratedKeys="true" keyProperty="id">
+        insert into td_student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentNo != null">student_no,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="studentPhone != null">student_phone,</if>
+            <if test="studentEmail != null">student_email,</if>
+            <if test="studentGrade != null">student_grade,</if>
+            <if test="studentPassword != null">student_password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentNo != null">#{studentNo},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="studentPhone != null">#{studentPhone},</if>
+            <if test="studentEmail != null">#{studentEmail},</if>
+            <if test="studentGrade != null">#{studentGrade},</if>
+            <if test="studentPassword != null">#{studentPassword},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTdStudent" parameterType="TdStudent">
+        update td_student
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentNo != null">student_no = #{studentNo},</if>
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="studentPhone != null">student_phone = #{studentPhone},</if>
+            <if test="studentEmail != null">student_email = #{studentEmail},</if>
+            <if test="studentGrade != null">student_grade = #{studentGrade},</if>
+            <if test="studentPassword != null">student_password = #{studentPassword},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTdStudentById" parameterType="Long">
+        delete from td_student where id = #{id}
+    </delete>
+
+    <delete id="deleteTdStudentByIds" parameterType="String">
+        delete from td_student where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,5 +1,10 @@
 package com.ruoyi.framework.web.service;
 
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.mapper.SysRoleMapper;
+import com.ruoyi.system.service.ITdStudentService;
+import com.ruoyi.system.service.ITdTeacherService;
+import com.ruoyi.system.service.impl.TdStudentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.constant.CacheConstants;
@@ -17,6 +22,7 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 注册校验方法
@@ -35,21 +41,24 @@ public class SysRegisterService
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private ITdStudentService tdStudentService;
+
+    @Autowired
+    private ITdTeacherService tdTeacherService;
+
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
+
     /**
      * 注册
      */
+    @Transactional
     public String register(RegisterBody registerBody)
     {
-        String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
+        String msg = "", username = registerBody.getName(), password = registerBody.getPassword();
         SysUser sysUser = new SysUser();
         sysUser.setUserName(username);
-
-        // 验证码开关
-        boolean captchaEnabled = configService.selectCaptchaEnabled();
-        if (captchaEnabled)
-        {
-            validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
-        }
 
         if (StringUtils.isEmpty(username))
         {
@@ -77,6 +86,19 @@ public class SysRegisterService
         {
             sysUser.setNickName(username);
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
+            sysUser.setEmail(registerBody.getEmail());
+            sysUser.setPhonenumber(registerBody.getPhone());
+            if (registerBody.getSex().equals("男")) {
+                sysUser.setSex("0");
+            }else if (registerBody.getSex().equals("女")){
+                sysUser.setSex("1");
+            }else {
+                sysUser.setSex("2");
+            }
+            sysUser.setNickName(registerBody.getName());
+            sysUser.setStatus("0");
+            sysUser.setDelFlag("0");
+
             boolean regFlag = userService.registerUser(sysUser);
             if (!regFlag)
             {
@@ -84,6 +106,12 @@ public class SysRegisterService
             }
             else
             {
+                //生成用户表
+                if (registerBody.getType().equals("学生")) {
+                    tdStudentService.saveByType(registerBody);
+                } else if (registerBody.getType().equals("教师")) {
+                    tdTeacherService.saveByType(registerBody);
+                }
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success")));
             }
         }

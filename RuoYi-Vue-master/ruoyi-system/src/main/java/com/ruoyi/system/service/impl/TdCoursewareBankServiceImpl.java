@@ -1,10 +1,12 @@
 package com.ruoyi.system.service.impl;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
+
+import com.ruoyi.common.utils.NoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,8 +63,17 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
      * @return 结果
      */
     @Override
-    public int insertTdCoursewareBank(TdCoursewareBank tdCoursewareBank)
+    public int insertTdCoursewareBank(TdCoursewareBank tdCoursewareBank,String profile)
     {
+
+        tdCoursewareBank.setCoursewareNo(NoUtils.getTypeNo("COURSEWARE_"));
+        tdCoursewareBank.setDownloadCount(0L);
+        tdCoursewareBank.setIsChecked("未审核");
+        tdCoursewareBank.setViewCount(0L);
+        String fileLocal = tdCoursewareBank.getFile().replace("/profile", profile);
+        File file = new File(fileLocal);
+        String printSize = getPrintSize(file.length());
+        tdCoursewareBank.setFileSize(printSize);
         return tdCoursewareBankMapper.insertTdCoursewareBank(tdCoursewareBank);
     }
 
@@ -90,9 +101,37 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
         return tdCoursewareBankMapper.deleteTdCoursewareBankByIds(ids);
     }
 
+    @Override
+    public int checkTdCoursewareBankByIds(Long[] ids,String type) {
+        for (Long id : ids) {
+            TdCoursewareBank tdCoursewareBank = selectTdCoursewareBankById(id);
+            if (!tdCoursewareBank.getIsChecked().equals("未审核")) {
+                throw new RuntimeException("审核过的资源无法再次审核");
+            }
+            if (type.equals("成功")) {
+                tdCoursewareBank.setIsChecked("已审核通过");
+            } else if (type.equals("驳回")) {
+                tdCoursewareBank.setIsChecked("审核不通过");
+            }
+            updateTdCoursewareBank(tdCoursewareBank);
+        }
+        return 1;
+    }
+
+    /**
+     * 添加浏览次数
+     * @param id
+     */
+    @Override
+    public void viewFile(Long id) {
+        TdCoursewareBank tdCoursewareBank = selectTdCoursewareBankById(id);
+        tdCoursewareBank.setViewCount(tdCoursewareBank.getViewCount()+1);
+        tdCoursewareBankMapper.updateTdCoursewareBank(tdCoursewareBank);
+    }
+
     /**
      * 删除课程库信息
-     * 
+     *
      * @param id 课程库主键
      * @return 结果
      */
@@ -106,6 +145,8 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
     public void downloadFile(Long id,String profile) throws FileNotFoundException {
         //根据库id查询当前数据
         TdCoursewareBank tdCoursewareBank = selectTdCoursewareBankById(id);
+        tdCoursewareBank.setDownloadCount(tdCoursewareBank.getDownloadCount()+1);
+        tdCoursewareBankMapper.updateTdCoursewareBank(tdCoursewareBank);
         String file = tdCoursewareBank.getFile();
         //获取文件名
         String[] split = file.split("/");
@@ -115,7 +156,11 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
         ServletRequestAttributes servletRequestAttributes =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 //        HttpServletRequest request = servletRequestAttributes.getRequest();
         HttpServletResponse response = servletRequestAttributes.getResponse();
-        downloadLocal(response,fileName,fileLocal);
+        if (tdCoursewareBank.getType().equals("视频")) {
+            downVideo(response, fileLocal);
+        }else {
+            downloadLocal(response,fileName,fileLocal);
+        }
     }
 
     public void downloadLocal(HttpServletResponse response,String fileName,String fileLocal) throws FileNotFoundException {
@@ -158,8 +203,56 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
 
     }
 
+
+    /**
+     * 下载视频
+     */
+    public void downVideo(HttpServletResponse response,String path) {
+        OutputStream out = null;
+        InputStream in = null;
+        try{
+            File file = new File(path);
+            if(!file.exists() || file.isDirectory()){
+//                logger.error("-------File not exist!---------");
+//                return ResultModel.fail("------文件不存在------",null);
+            }
+            //取得文件名
+            String filename = file.getName();
+            //以流的形式下载文件
+            in = new BufferedInputStream(new FileInputStream(file));
+            byte[] buffer = new byte[in.available()];
+            in.read(buffer);
+            in.close();
+            //清空 response
+            response.reset();
+            //设置 response的Header
+            response.addHeader("Content-Disposition","attachment;filename=\"" + filename+"\"");
+            out = new BufferedOutputStream(response.getOutputStream());
+            response.setContentType("application/octet-stream");
+            out.write(buffer);
+            out.flush();
+            out.close();
+//            return ResultModel.success(-----Dowmload Success-----,null);
+        }catch(Exception e){
+//            return ResultModel.fail(500,e);
+            throw new RuntimeException(e.getMessage());
+        } finally{
+            //插入当前接口成功的操作到日志表
+            try{
+                if(out != null){
+                    out.close();
+                }
+                if(in != null){
+                    in.close();
+                }
+            }catch(IOException e){
+                //IOException
+            }
+        }
+    }
+
     public static String getPrintSize(long size) {
-//如果字节数少于1024，则直接以B为单位，否则先除于1024，后3位因太少无意义
+        //如果字节数少于1024，则直接以B为单位，否则先除于1024，后3位因太少无意义
 
         if (size < 1024) {
             return String.valueOf(size) + "B";
@@ -169,11 +262,11 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
 
         }
 
-//如果原字节数除于1024之后，少于1024，则可以直接以KB作为单位
+        //如果原字节数除于1024之后，少于1024，则可以直接以KB作为单位
 
-//因为还没有到达要使用另一个单位的时候
+        //因为还没有到达要使用另一个单位的时候
 
-//接下去以此类推
+        //接下去以此类推
 
         if (size < 1024) {
             return String.valueOf(size) + "KB";
@@ -184,9 +277,9 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
         }
 
         if (size < 1024) {
-//因为如果以MB为单位的话，要保留最后1位小数，
+        //因为如果以MB为单位的话，要保留最后1位小数，
 
-//因此，把此数乘以100之后再取余
+        //因此，把此数乘以100之后再取余
 
             size = size * 100;
 
@@ -195,7 +288,7 @@ public class TdCoursewareBankServiceImpl implements ITdCoursewareBankService
                     + String.valueOf((size % 100)) + "MB";
 
         } else {
-//否则如果要以GB为单位的，先除于1024再作同样的处理
+        //否则如果要以GB为单位的，先除于1024再作同样的处理
 
             size = size * 100 / 1024;
 

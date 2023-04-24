@@ -58,4 +58,6 @@ public interface TdCourseMapper
      * @return 结果
      */
     public int deleteTdCourseByIds(Long[] ids);
+
+    TdCourse selectTdCourseByName(String courseName);
 }

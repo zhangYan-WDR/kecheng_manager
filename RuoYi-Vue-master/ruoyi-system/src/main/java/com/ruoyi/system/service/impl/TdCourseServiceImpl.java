@@ -1,6 +1,8 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.NoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.TdCourseMapper;
@@ -52,6 +54,11 @@ public class TdCourseServiceImpl implements ITdCourseService
     @Override
     public int insertTdCourse(TdCourse tdCourse)
     {
+        TdCourse result = tdCourseMapper.selectTdCourseByName(tdCourse.getCourseName());
+        if (result != null) {
+            throw new RuntimeException("当前课程已经存在");
+        }
+        tdCourse.setCourseNo(NoUtils.getTypeNo("COURSE_"));
         return tdCourseMapper.insertTdCourse(tdCourse);
     }
 

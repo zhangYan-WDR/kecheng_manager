@@ -46,7 +46,7 @@ public class TdCoursewareBank extends BaseEntity
 
     /** 文件大小 */
     @Excel(name = "文件大小")
-    private Long fileSize;
+    private String fileSize;
 
     /** 课程编号 */
     @Excel(name = "课程编号")
@@ -132,12 +132,12 @@ public class TdCoursewareBank extends BaseEntity
     {
         return uploadAuthor;
     }
-    public void setFileSize(Long fileSize) 
+    public void setFileSize(String fileSize)
     {
         this.fileSize = fileSize;
     }
 
-    public Long getFileSize() 
+    public String getFileSize()
     {
         return fileSize;
     }

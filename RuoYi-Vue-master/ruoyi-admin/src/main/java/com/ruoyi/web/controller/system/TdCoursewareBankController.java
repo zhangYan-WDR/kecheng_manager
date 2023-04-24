@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.utils.NoUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,8 @@ public class TdCoursewareBankController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody TdCoursewareBank tdCoursewareBank)
     {
-        return toAjax(tdCoursewareBankService.insertTdCoursewareBank(tdCoursewareBank));
+        tdCoursewareBank.setUploadAuthor(getUsername());
+        return toAjax(tdCoursewareBankService.insertTdCoursewareBank(tdCoursewareBank,profile));
     }
 
     /**
@@ -104,9 +106,38 @@ public class TdCoursewareBankController extends BaseController
         return toAjax(tdCoursewareBankService.deleteTdCoursewareBankByIds(ids));
     }
 
+    /**
+     * 审核课程库成功
+     */
+    @PreAuthorize("@ss.hasPermi('system:bank:check')")
+    @Log(title = "课程库", businessType = BusinessType.CHECK)
+    @PostMapping("check/{ids}")
+    public AjaxResult check(@PathVariable Long[] ids)
+    {
+        return toAjax(tdCoursewareBankService.checkTdCoursewareBankByIds(ids,"成功"));
+    }
+
+    /**
+     * 审核课程库失败
+     * @param ids
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('system:bank:check')")
+    @Log(title = "课程库", businessType = BusinessType.CHECK)
+    @PostMapping("checkFail/{ids}")
+    public AjaxResult checkFail(@PathVariable Long[] ids)
+    {
+        return toAjax(tdCoursewareBankService.checkTdCoursewareBankByIds(ids,"驳回"));
+    }
+
     @GetMapping("/download")
     public void downloadFile(@RequestParam("id") Long id) throws FileNotFoundException {
         tdCoursewareBankService.downloadFile(id,profile);
+    }
+
+    @GetMapping("/view")
+    public void viewFile(@RequestParam("id") Long id) throws FileNotFoundException {
+        tdCoursewareBankService.viewFile(id);
     }
 
 }

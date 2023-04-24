@@ -28,6 +28,11 @@ public enum BusinessType
     DELETE,
 
     /**
+     * 审核
+     */
+    CHECK,
+
+    /**
      * 授权
      */
     GRANT,

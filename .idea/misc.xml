@@ -5,6 +5,12 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/RuoYi-Vue-master/pom.xml" />
+        <option value="$PROJECT_DIR$/RuoYi-Vue-master/ruoyi-admin/pom.xml" />
+        <option value="$PROJECT_DIR$/RuoYi-Vue-master/ruoyi-common/pom.xml" />
+        <option value="$PROJECT_DIR$/RuoYi-Vue-master/ruoyi-framework/pom.xml" />
+        <option value="$PROJECT_DIR$/RuoYi-Vue-master/ruoyi-generator/pom.xml" />
+        <option value="$PROJECT_DIR$/RuoYi-Vue-master/ruoyi-quartz/pom.xml" />
+        <option value="$PROJECT_DIR$/RuoYi-Vue-master/ruoyi-system/pom.xml" />
       </list>
     </option>
   </component>

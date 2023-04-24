@@ -42,3 +42,18 @@ export function delBank(id) {
     method: 'delete'
   })
 }
+
+// 审核课程库
+export function checkBank(id) {
+  return request({
+    url: '/system/bank/check/' + id,
+    method: 'post'
+  })
+}
+
+export function checkBankFail(id) {
+  return request({
+    url: '/system/bank/checkFail/' + id,
+    method: 'post'
+  })
+}

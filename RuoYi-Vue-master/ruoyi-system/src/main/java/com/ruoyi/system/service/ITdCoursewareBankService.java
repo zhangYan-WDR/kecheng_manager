@@ -34,7 +34,7 @@ public interface ITdCoursewareBankService
      * @param tdCoursewareBank 课程库
      * @return 结果
      */
-    public int insertTdCoursewareBank(TdCoursewareBank tdCoursewareBank);
+    public int insertTdCoursewareBank(TdCoursewareBank tdCoursewareBank,String profile);
 
     /**
      * 修改课程库
@@ -62,4 +62,7 @@ public interface ITdCoursewareBankService
 
     void downloadFile(Long id,String profile) throws FileNotFoundException;
 
+    int checkTdCoursewareBankByIds(Long[] ids,String type);
+
+    void viewFile(Long id);
 }

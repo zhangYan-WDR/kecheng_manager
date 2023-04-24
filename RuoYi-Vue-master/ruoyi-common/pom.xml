@@ -30,9 +30,16 @@
 
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.0</version>
+            <artifactId>mybatis-plus-extension</artifactId>
+            <version>3.2.0</version>
+            <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
 
         <!-- SpringWeb模块 -->
         <dependency>

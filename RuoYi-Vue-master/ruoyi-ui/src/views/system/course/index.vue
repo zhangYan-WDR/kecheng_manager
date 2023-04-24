@@ -71,7 +71,6 @@
 
     <el-table v-loading="loading" :data="courseList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="课程表主键" align="center" prop="id" />
       <el-table-column label="课程编号" align="center" prop="courseNo" />
       <el-table-column label="课程名称" align="center" prop="courseName" />
       <el-table-column label="课程性质" align="center" prop="courseQuality" />
@@ -99,7 +98,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -111,9 +110,6 @@
     <!-- 添加或修改课程对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="课程编号" prop="courseNo">
-          <el-input v-model="form.courseNo" placeholder="请输入课程编号" />
-        </el-form-item>
         <el-form-item label="课程名称" prop="courseName">
           <el-input v-model="form.courseName" placeholder="请输入课程名称" />
         </el-form-item>

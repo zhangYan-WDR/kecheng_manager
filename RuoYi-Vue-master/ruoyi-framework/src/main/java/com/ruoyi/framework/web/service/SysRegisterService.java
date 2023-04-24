@@ -59,6 +59,9 @@ public class SysRegisterService
         String msg = "", username = registerBody.getName(), password = registerBody.getPassword();
         SysUser sysUser = new SysUser();
         sysUser.setUserName(username);
+        sysUser.setEmail(registerBody.getEmail());
+        sysUser.setPhonenumber(registerBody.getPhone());
+        sysUser.setNickName(registerBody.getNo());
 
         if (StringUtils.isEmpty(username))
         {
@@ -81,31 +84,34 @@ public class SysRegisterService
         else if (!userService.checkUserNameUnique(sysUser))
         {
             msg = "保存用户'" + username + "'失败，注册账号已存在";
-        }
-        else
-        {
+        } else if (!userService.checkEmailUnique(sysUser)) {
+            msg = "保存用户'" + sysUser.getEmail() + "'失败，邮箱已被使用";
+        } else if (!userService.checkPhoneUnique(sysUser)) {
+            msg = "保存用户'" + sysUser.getPhonenumber() + "'失败，手机号已被注册";
+        } else if (!userService.checkPhoneUnique(sysUser)) {
+            msg = "保存用户'" + sysUser.getPhonenumber() + "'失败，手机号已被注册";
+        } else if (!userService.checkNoUnique(sysUser)) {
+            msg = "保存用户'" + sysUser.getNickName() + "'失败，身份证号已被注册";
+        } else {
             sysUser.setNickName(username);
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
             sysUser.setEmail(registerBody.getEmail());
             sysUser.setPhonenumber(registerBody.getPhone());
             if (registerBody.getSex().equals("男")) {
                 sysUser.setSex("0");
-            }else if (registerBody.getSex().equals("女")){
+            } else if (registerBody.getSex().equals("女")) {
                 sysUser.setSex("1");
-            }else {
+            } else {
                 sysUser.setSex("2");
             }
-            sysUser.setNickName(registerBody.getName());
+            sysUser.setNickName(registerBody.getNo());
             sysUser.setStatus("0");
             sysUser.setDelFlag("0");
 
             boolean regFlag = userService.registerUser(sysUser);
-            if (!regFlag)
-            {
+            if (!regFlag) {
                 msg = "注册失败,请联系系统管理人员";
-            }
-            else
-            {
+            } else {
                 //生成用户表
                 if (registerBody.getType().equals("学生")) {
                     tdStudentService.saveByType(registerBody);

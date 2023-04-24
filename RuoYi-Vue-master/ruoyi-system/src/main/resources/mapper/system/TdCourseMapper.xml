@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TdCourseMapper">
+    
+    <resultMap type="TdCourse" id="TdCourseResult">
+        <result property="id"    column="id"    />
+        <result property="courseNo"    column="course_no"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="courseQuality"    column="course_quality"    />
+        <result property="inspectModality"    column="inspect_modality"    />
+        <result property="practicalHours"    column="practical_hours"    />
+        <result property="openTerm"    column="open_term"    />
+        <result property="credit"    column="credit"    />
+        <result property="theoreticalHours"    column="theoretical_hours"    />
+    </resultMap>
+
+    <sql id="selectTdCourseVo">
+        select id, course_no, course_name, course_quality, inspect_modality, practical_hours, open_term, credit, theoretical_hours from td_course
+    </sql>
+
+    <select id="selectTdCourseList" parameterType="TdCourse" resultMap="TdCourseResult">
+        <include refid="selectTdCourseVo"/>
+        <where>  
+            <if test="courseNo != null  and courseNo != ''"> and course_no like concat('%', #{courseNo}, '%')</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTdCourseById" parameterType="Long" resultMap="TdCourseResult">
+        <include refid="selectTdCourseVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTdCourse" parameterType="TdCourse">
+        insert into td_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="courseNo != null and courseNo != ''">course_no,</if>
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="courseQuality != null">course_quality,</if>
+            <if test="inspectModality != null">inspect_modality,</if>
+            <if test="practicalHours != null">practical_hours,</if>
+            <if test="openTerm != null">open_term,</if>
+            <if test="credit != null">credit,</if>
+            <if test="theoreticalHours != null">theoretical_hours,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="courseNo != null and courseNo != ''">#{courseNo},</if>
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="courseQuality != null">#{courseQuality},</if>
+            <if test="inspectModality != null">#{inspectModality},</if>
+            <if test="practicalHours != null">#{practicalHours},</if>
+            <if test="openTerm != null">#{openTerm},</if>
+            <if test="credit != null">#{credit},</if>
+            <if test="theoreticalHours != null">#{theoreticalHours},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTdCourse" parameterType="TdCourse">
+        update td_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseNo != null and courseNo != ''">course_no = #{courseNo},</if>
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="courseQuality != null">course_quality = #{courseQuality},</if>
+            <if test="inspectModality != null">inspect_modality = #{inspectModality},</if>
+            <if test="practicalHours != null">practical_hours = #{practicalHours},</if>
+            <if test="openTerm != null">open_term = #{openTerm},</if>
+            <if test="credit != null">credit = #{credit},</if>
+            <if test="theoreticalHours != null">theoretical_hours = #{theoreticalHours},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTdCourseById" parameterType="Long">
+        delete from td_course where id = #{id}
+    </delete>
+
+    <delete id="deleteTdCourseByIds" parameterType="String">
+        delete from td_course where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

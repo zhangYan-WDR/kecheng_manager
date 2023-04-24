@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -14,14 +15,5 @@
         <module name="ruoyi-admin" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="ruoyi" target="1.8" />
-      <module name="ruoyi-admin" target="1.8" />
-      <module name="ruoyi-common" target="1.8" />
-      <module name="ruoyi-framework" target="1.8" />
-      <module name="ruoyi-generator" target="1.8" />
-      <module name="ruoyi-quartz" target="1.8" />
-      <module name="ruoyi-system" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

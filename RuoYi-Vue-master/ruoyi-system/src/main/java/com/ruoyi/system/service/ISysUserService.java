@@ -82,6 +82,14 @@ public interface ISysUserService
      */
     public boolean checkPhoneUnique(SysUser user);
 
+
+    /**
+     * 检查身份证号
+     * @param user
+     * @return
+     */
+    public boolean checkNoUnique(SysUser user);
+
     /**
      * 校验email是否唯一
      *

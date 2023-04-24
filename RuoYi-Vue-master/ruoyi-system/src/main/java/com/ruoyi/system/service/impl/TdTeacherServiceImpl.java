@@ -1,8 +1,16 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.RegisterBody;
+import com.ruoyi.system.domain.SysUserRole;
+import com.ruoyi.system.domain.TdStudent;
+import com.ruoyi.system.mapper.SysRoleMapper;
+import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.system.mapper.SysUserRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.TdTeacherMapper;
@@ -20,6 +28,15 @@ public class TdTeacherServiceImpl implements ITdTeacherService
 {
     @Autowired
     private TdTeacherMapper tdTeacherMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
 
     /**
      * 查询教师管理
@@ -95,6 +112,23 @@ public class TdTeacherServiceImpl implements ITdTeacherService
 
     @Override
     public void saveByType(RegisterBody registerBody) {
-
+        TdTeacher tdTeacher = new TdTeacher();
+        tdTeacher.setTeacherEmail(registerBody.getEmail());
+        tdTeacher.setTeacherName(registerBody.getName());
+        tdTeacher.setTeacherPassword(registerBody.getPassword());
+        tdTeacher.setTeacherPhone(registerBody.getPhone());
+        tdTeacher.setTeacherNo(registerBody.getNo());
+        tdTeacher.setTeacherSex(registerBody.getSex());
+        tdTeacherMapper.insertTdTeacher(tdTeacher);
+        //查询系统用户的id
+        SysUser sysUser = sysUserMapper.selectUserByUserName(tdTeacher.getTeacherName());
+        //关联当前权限
+        SysRole sysRole = sysRoleMapper.selectRoleByName("教师");
+        SysUserRole sysUserRole = new SysUserRole();
+        sysUserRole.setUserId(sysUser.getUserId());
+        sysUserRole.setRoleId(sysRole.getRoleId());
+        ArrayList<SysUserRole> sysUserRoles = new ArrayList<>();
+        sysUserRoles.add(sysUserRole);
+        sysUserRoleMapper.batchUserRole(sysUserRoles);
     }
 }

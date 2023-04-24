@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TdCoursewareBankMapper">
+    
+    <resultMap type="TdCoursewareBank" id="TdCoursewareBankResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="section"    column="section"    />
+        <result property="coursewareNo"    column="courseware_no"    />
+        <result property="viewCount"    column="view_count"    />
+        <result property="downloadCount"    column="download_count"    />
+        <result property="uploadAuthor"    column="upload_author"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="courseNo"    column="course_no"    />
+        <result property="file"    column="file"    />
+        <result property="isChecked"    column="is_checked"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectTdCoursewareBankVo">
+        select id, title, section, courseware_no, view_count, download_count, upload_author, file_size, course_no, file, is_checked, upload_time, type from td_courseware_bank
+    </sql>
+
+    <select id="selectTdCoursewareBankList" parameterType="TdCoursewareBank" resultMap="TdCoursewareBankResult">
+        <include refid="selectTdCoursewareBankVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTdCoursewareBankById" parameterType="Long" resultMap="TdCoursewareBankResult">
+        <include refid="selectTdCoursewareBankVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTdCoursewareBank" parameterType="TdCoursewareBank" useGeneratedKeys="true" keyProperty="id">
+        insert into td_courseware_bank
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">title,</if>
+            <if test="section != null">section,</if>
+            <if test="coursewareNo != null">courseware_no,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="downloadCount != null">download_count,</if>
+            <if test="uploadAuthor != null">upload_author,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="courseNo != null">course_no,</if>
+            <if test="file != null">file,</if>
+            <if test="isChecked != null">is_checked,</if>
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">#{title},</if>
+            <if test="section != null">#{section},</if>
+            <if test="coursewareNo != null">#{coursewareNo},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="downloadCount != null">#{downloadCount},</if>
+            <if test="uploadAuthor != null">#{uploadAuthor},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="courseNo != null">#{courseNo},</if>
+            <if test="file != null">#{file},</if>
+            <if test="isChecked != null">#{isChecked},</if>
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTdCoursewareBank" parameterType="TdCoursewareBank">
+        update td_courseware_bank
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+            <if test="section != null">section = #{section},</if>
+            <if test="coursewareNo != null">courseware_no = #{coursewareNo},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="downloadCount != null">download_count = #{downloadCount},</if>
+            <if test="uploadAuthor != null">upload_author = #{uploadAuthor},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+            <if test="courseNo != null">course_no = #{courseNo},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="isChecked != null">is_checked = #{isChecked},</if>
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTdCoursewareBankById" parameterType="Long">
+        delete from td_courseware_bank where id = #{id}
+    </delete>
+
+    <delete id="deleteTdCoursewareBankByIds" parameterType="String">
+        delete from td_courseware_bank where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

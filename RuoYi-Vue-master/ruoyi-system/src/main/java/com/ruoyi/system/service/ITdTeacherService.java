@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.common.core.domain.model.RegisterBody;
 import com.ruoyi.system.domain.TdTeacher;
 
@@ -11,7 +12,7 @@ import com.ruoyi.system.domain.TdTeacher;
  * @author ruoyi
  * @date 2023-04-23
  */
-public interface ITdTeacherService 
+public interface ITdTeacherService extends IService<TdTeacher>
 {
     /**
      * 查询教师管理

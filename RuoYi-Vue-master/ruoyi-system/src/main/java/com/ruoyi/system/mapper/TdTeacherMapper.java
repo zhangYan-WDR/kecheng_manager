@@ -1,6 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.system.domain.TdTeacher;
 
 /**
@@ -9,7 +11,7 @@ import com.ruoyi.system.domain.TdTeacher;
  * @author ruoyi
  * @date 2023-04-23
  */
-public interface TdTeacherMapper 
+public interface TdTeacherMapper extends BaseMapper<TdTeacher>
 {
     /**
      * 查询教师管理

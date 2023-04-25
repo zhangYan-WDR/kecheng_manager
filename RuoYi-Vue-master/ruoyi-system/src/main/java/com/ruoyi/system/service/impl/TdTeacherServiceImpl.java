@@ -3,6 +3,7 @@ package com.ruoyi.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.RegisterBody;
@@ -24,7 +25,7 @@ import com.ruoyi.system.service.ITdTeacherService;
  * @date 2023-04-23
  */
 @Service
-public class TdTeacherServiceImpl implements ITdTeacherService 
+public class TdTeacherServiceImpl extends ServiceImpl<TdTeacherMapper,TdTeacher> implements ITdTeacherService
 {
     @Autowired
     private TdTeacherMapper tdTeacherMapper;

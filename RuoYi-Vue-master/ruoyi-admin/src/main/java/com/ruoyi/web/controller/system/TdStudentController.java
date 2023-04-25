@@ -2,6 +2,12 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ruoyi.common.core.domain.R;
+import com.ruoyi.common.core.domain.model.LoginBody;
+import com.ruoyi.system.domain.TdTeacher;
+import com.ruoyi.system.service.ITdTeacherService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +39,9 @@ public class TdStudentController extends BaseController
 {
     @Autowired
     private ITdStudentService tdStudentService;
+
+    @Autowired
+    private ITdTeacherService tdTeacherService;
 
     /**
      * 查询学生列表
@@ -101,4 +110,36 @@ public class TdStudentController extends BaseController
     {
         return toAjax(tdStudentService.deleteTdStudentByIds(ids));
     }
+
+
+    @PostMapping("/loginInfo")
+    public R login(@RequestBody LoginBody loginBody) {
+        R<Object> r = R.ok();
+        LambdaQueryWrapper<TdStudent> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TdStudent::getStudentName,loginBody.getUsername());
+        TdStudent student = tdStudentService.getOne(queryWrapper);
+        if (student == null) {
+            //查询教师
+            LambdaQueryWrapper<TdTeacher> teacherWrapper = new LambdaQueryWrapper<>();
+            teacherWrapper.eq(TdTeacher::getTeacherName,loginBody.getUsername());
+            TdTeacher tdTeacher = tdTeacherService.getOne(teacherWrapper);
+            if (tdTeacher == null) {
+                r.setMsg("查无此人");
+                return r;
+            }
+            if (!tdTeacher.getTeacherPassword().equals(loginBody.getPassword())) {
+                r.setMsg("密码不正确");
+                return r;
+            }
+            r.setData(tdTeacher);
+            return r;
+        }
+        if (!student.getStudentPassword().equals(loginBody.getPassword())) {
+            r.setMsg("密码不正确");
+            return r;
+        }
+        r.setData(student);
+        return r;
+    }
+
 }

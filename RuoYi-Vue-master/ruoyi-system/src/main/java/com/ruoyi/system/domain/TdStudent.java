@@ -1,5 +1,7 @@
 package com.ruoyi.system.domain;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -11,7 +13,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author zhangyan
  * @date 2023-04-23
  */
-public class TdStudent extends BaseEntity
+@TableName("td_student")
+public class TdStudent
 {
     private static final long serialVersionUID = 1L;
 
